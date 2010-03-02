@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "examples/google.rb",
      "lib/razor.rb",
+     "razor.gemspec",
      "test/helper.rb",
      "test/test_razor.rb"
   ]
