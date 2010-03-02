@@ -70,8 +70,7 @@ To do so, add the following options to razor.shave
 
 You can access the webdriver straight from:
   razor.webdriver
-This webdriver follows the interface of {watir}[http://www.watir.com/
-documentation/]
+This webdriver follows the interface of {watir}[http://www.watir.com/documentation/]
 
 == Accessing the selenium object
 
