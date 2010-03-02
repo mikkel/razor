@@ -80,7 +80,7 @@ The selenium object follows the interface of {selenium}[http://code.google.com/p
 
 == Why create this?
 
-There are many great web scraping utilities available for Ruby (Scrubyt, ScrAPI to name two).
+There are many great web scraping utilities available for Ruby ({Scrubyt}[http://www.scrubyt.org], {ScrAPI}[http://github.com/assaf/scrapi] to name two).
 
 None of them use Firefox natively (Scrubyt is able to with JSSH, but JSSH is buggy).
 
