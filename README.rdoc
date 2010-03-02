@@ -56,6 +56,16 @@ The block takes an Watir::Element (obtained from the xpath).  See the watir docu
 
 Array is the same as value, except this returns an array of results.
 
+== Waiting for page load
+
+We poll each requested shaving every 0.5 seconds until we return a result, or 5 seconds elapse.  You can override this behaviour if it does not suite the website you are polling.
+
+To do so, add the following options to razor.shave
+  # Will poll 10 times a second for a total of 100 polls
+  razor.shave(:number_of_steps => 100, :step_time => 0.1) do
+    ...
+  end
+
 == Accessing the webdriver
 
 You can access the webdriver straight from:
