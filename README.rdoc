@@ -26,7 +26,7 @@ Razor avoids 'magical' ruby code.  It aims to be a straight-forward tool that us
 
   results # => {:suggestions=>["buy.com coupon", "buy.com promotion code", "overstock", "newegg", "deals2buy", "shopping", "buy cars", "buy costumes"], :stats=>"1,740,000,000"}
 
-== Supported Browsers
+=== Supported Browsers
 
 Since Razor uses watir-webdriver, it can hypothetically support all the browsers Selenium does.  :ie, :chrome, :firefox, even :remote
 
@@ -34,17 +34,21 @@ Razor is developed on Firefox because of Firebug.  All testing is done in Firefo
 
 === Razor#shave
 
-Shaving is as simple as possible, while maintaining power.
+Shaving is as simple as possible, while maintaining power.  Shaving returns a hash of name => block.call(element(s).at(xpath))
 
-  value name, xpath, block
+  razor.shave do
+    value name, xpath, block
+  end
 
-Returns a single value (the first matching xpath), and processes it through the block, if a block is specified.
+value returns a single value (the first matching xpath), and processes it through the block, if a block is specified.
 
 The block takes an Watir::Element (obtained from the xpath).  See the watir documentation for more information {watir}[http://watir.com/documentation/]
 
-  array name, xpath, block
+  razor.shave do
+    array name, xpath, block
+  end
 
-Same as value, except this returns an array of results.
+Array is the same as value, except this returns an array of results.
 
 == Accessing the webdriver
 
