@@ -48,6 +48,11 @@ class Shave
     @arrays << [name,xpath,block]
   end
 
+  def evaluate
+    evaluate_values.merge(evaluate_arrays)
+  end
+
+
 private
   # Because of the fact that selenium doesn't wait for the page to load,
   # we continuously poll every :step_time seconds for a :number_of_steps
@@ -100,11 +105,5 @@ private
     end
   end
 
-  def evaluate
-    result = {}
-    result.merge!(evaluate_values)
-    result.merge!(evaluate_arrays)
-    result
-  end
 end
 
