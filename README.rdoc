@@ -1,9 +1,57 @@
-= webshaver
+= Razor
 
-Description goes here.
+Razor is a simplistic web scraper built on watir-webdriver.
+Razor is not magic it is a tool that straight-up uses the web browser to access web pages and xpath (only xpath) to parse the DOM of a web page.
 
+== Usage
+
+=== Example 1: Scraping Google for # of hits / suggestions
+
+  require 'razor'
+
+  razor = Razor.new(:blade => :firefox)
+  razor.goto "http://www.google.com"
+  razor.enter_text "//input[@name='q']", "Buy"
+  razor.submit
+
+  results = razor.shave do
+    value(:stats, "//p[@id='resultStats']") do |x|
+      x.text.scan(/of about (.+) for/)[0][0]
+    end
+    array :suggestions, "//table[@id='brs']/tbody/tr/td" do |x|
+      x.text
+    end
+  end
+
+  results # => {:suggestions=>["buy.com coupon", "buy.com promotion code", "overstock", "newegg", "deals2buy", "shopping", "buy cars", "buy costumes"], :stats=>"1,740,000,000"}
+
+=== Razor#shave
+
+Shaving is as simple as possible, while maintaining power.
+
+  value name, xpath, block
+
+Returns a single value (the first matching xpath), and processes it through the block, if a block is specified.
+
+The block takes an Watir::Element (obtained from the xpath).  See the watir documentation for more information {watir}[http://watir.com/documentation/]
+
+  array name, xpath, block
+
+Same as value, except this returns an array of results.
+
+== Accessing the webdriver
+
+You can access the webdriver straight from the
+  Razor#webdriver
+method.  This webdriver follows the interface of {watir}[http://watir.com/documentation/]
+
+== Accessing the selenium object
+
+You can access the selenium object with:
+  razor.webdriver.driver
+The selenium object follows the interface of {selenium}[http://code.google.com/p/selenium/wiki/RubyBindings]
 == Note on Patches/Pull Requests
- 
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a
@@ -15,3 +63,4 @@ Description goes here.
 == Copyright
 
 Copyright (c) 2010 Mikkel Garcia. See LICENSE for details.
+
