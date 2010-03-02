@@ -24,7 +24,13 @@ Razor avoids 'magical' ruby code.  It aims to be a straight-forward tool that us
     end
   end
 
-  results # => {:suggestions=>["buy.com coupon", "buy.com promotion code", "overstock", "newegg", "deals2buy", "shopping", "buy cars", "buy costumes"], :stats=>"1,740,000,000"}
+  results # =>
+  # {
+  #   :suggestions=> ["buy.com coupon", "buy.com promotion code",
+  #                   "overstock", "newegg", "deals2buy", "shopping",
+  #                   "buy cars", "buy costumes"],
+  #   :stats=>"1,740,000,000"
+  #}
 
 === Supported Browsers
 
