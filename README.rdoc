@@ -1,7 +1,8 @@
 = Razor
 
 Razor is a simplistic web scraper built on watir-webdriver.
-Razor is not magic it is a tool that straight-up uses the web browser to access web pages and xpath (only xpath) to parse the DOM of a web page.
+
+Razor avoids 'magical' ruby code.  It aims to be a straight-forward tool that uses the web browser to access web pages and xpath (only xpath) to parse the DOM of a web page.
 
 == Usage
 
@@ -25,6 +26,12 @@ Razor is not magic it is a tool that straight-up uses the web browser to access 
 
   results # => {:suggestions=>["buy.com coupon", "buy.com promotion code", "overstock", "newegg", "deals2buy", "shopping", "buy cars", "buy costumes"], :stats=>"1,740,000,000"}
 
+== Supported Browsers
+
+Since Razor uses watir-webdriver, it can hypothetically support all the browsers Selenium does.  :ie, :chrome, :firefox, even :remote
+
+Razor is developed on Firefox because of Firebug.  All testing is done in Firefox.  All bugs will be addressed as they relate to Firefox.  Any other support is welcome from our users.
+
 === Razor#shave
 
 Shaving is as simple as possible, while maintaining power.
@@ -41,9 +48,10 @@ Same as value, except this returns an array of results.
 
 == Accessing the webdriver
 
-You can access the webdriver straight from the
-  Razor#webdriver
-method.  This webdriver follows the interface of {watir}[http://watir.com/documentation/]
+You can access the webdriver straight from:
+  razor.webdriver
+This webdriver follows the interface of {watir}[http://watir.com/
+documentation/]
 
 == Accessing the selenium object
 
@@ -59,6 +67,12 @@ The selenium object follows the interface of {selenium}[http://code.google.com/p
 * Commit, do not mess with rakefile, version, or history.
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
+
+== Why create this?
+
+There are many great web scraping utilities available for Ruby (Scrubyt, ScrAPI to name two).
+
+None of them use Firefox natively (Scrubyt is able to with JSSH, but JSSH is buggy).
 
 == Copyright
 
