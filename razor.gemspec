@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{razor}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mikkel Garcia"]
-  s.date = %q{2010-03-02}
+  s.date = %q{2010-03-03}
   s.description = %q{
     Razor is a simplistic web scraper built on watir-webdriver.
     Razor is not magic it is a tool that straight-up uses the web browser to access web pages and xpath (only xpath) to parse the DOM of a web page.
