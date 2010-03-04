@@ -56,6 +56,30 @@ The block takes an Watir::Element (obtained from the xpath).  See the watir docu
 
 Array is the same as value, except this returns an array of results.
 
+== next_page xpath
+
+We provide a convenience method for next page elements.  The next_page method will
+continue to click Next until it cannot find the element.
+
+  razor.shave do
+    next_page "//a[text()='Next']"
+  end
+
+Since all bad xpaths will immediately break from the next page loop, it can be hard to debug.
+
+To debug your xpath, add:
+  razor.click "xpath"
+
+Which will throw an error if the xpath cannot be found.
+
+== Closing webdriver
+
+There is a finalizer that closes the browser window.  However, Ruby finalizers aren't
+great, and sometimes the window will need to be closed manually.
+
+To do so:
+  razor.close
+
 == Waiting for page load
 
 We poll each requested shaving every 0.5 seconds until we return a result, or 5 seconds elapse.  You can override this behaviour if it does not suite the website you are polling.

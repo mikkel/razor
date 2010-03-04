@@ -24,6 +24,10 @@ class Razor
   def shave(options={}, &block)
     Shave.new(@webdriver, options, &block).evaluate
   end
+  def close
+    @webdriver.close
+  end
+
   def self.finalize(webdriver)
     proc { webdriver.close }
   end
@@ -40,6 +44,10 @@ class Shave
     self.instance_eval &block
   end
 
+  def next_page(xpath)
+    @next_page_xpath = xpath
+  end
+
   def value(name, xpath, &block)
     @values << [name,xpath,block]
   end
@@ -49,11 +57,36 @@ class Shave
   end
 
   def evaluate
-    evaluate_values.merge(evaluate_arrays)
+    result = {}
+    while(true)
+      result = merge_values(result, evaluate_values.merge(evaluate_arrays))
+      break if @next_page_xpath == nil
+
+      begin
+        @webdriver.element_by_xpath(@next_page_xpath).click
+      rescue
+        break
+      end
+    end
+    result
   end
 
 
 private
+
+  # Two hashs of {:test => [1]} {:test => [2,3]}
+  # become: {:test => [1,2,3]}
+  def merge_values(f, s)
+    result = {}
+    f.each do |name, value|
+      result[name] = value + (s[name] || []) if(value.is_a? Array)
+    end
+    s.each do |name, value|
+      result[name] ||= value
+    end
+    result
+  end
+
   # Because of the fact that selenium doesn't wait for the page to load,
   # we continuously poll every :step_time seconds for a :number_of_steps
   def evaluate_values
