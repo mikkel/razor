@@ -18,6 +18,12 @@ class Razor
   def submit
     @webdriver.form(:xpath, "//form").submit
   end
+  def element(xpath)
+    @webdriver.element_by_xpath(xpath)
+  end
+  def input(xpath)
+    @webdriver.input(:xpath, xpath)
+  end
   def click(xpath)
     @webdriver.element_by_xpath(xpath).click
   end
@@ -70,12 +76,11 @@ class Shave
       new_result = merge_values(result, page_results)
 
       #next page
+      next_page = nil
       unless @next_page_xpath == nil
-        begin
-          next_page = @webdriver.element_by_xpath(@next_page_xpath)
-        rescue
-          break
-        end
+        next_page = @webdriver.element_by_xpath(@next_page_xpath)
+
+        break unless next_page.exists?
       end
 
       # validation
