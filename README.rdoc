@@ -90,6 +90,35 @@ To do so, add the following options to razor.shave
     ...
   end
 
+=== Page Validation
+
+Razor is capable of validating the results of each page scraping.  There is a :validation_limit option on shave that determines how many times to attempt validation on a page before giving up (while sleeping for :step_time in between).
+  razor.shave(:validation_limit => 5, :sleep_time => 1) do
+    # This will call the validations for each page 5 times, sleeping 1 second in between before raising an exception
+  end
+
+validation_limit defaults to 10
+
+=== Shave#validate
+Shave#validate takes a block that validates a page's shaving result hash arbitrarily.
+
+  razor = Razor.new(:blade => :firefox)
+  razor.goto "http://www.google.com"
+  razor.enter_text "//input[@name='q']", "Buy"
+  razor.submit
+
+  results = razor.shave do
+    array :suggestions, "//table[@id='brs']/tbody/tr/td" do |x|
+      x.text
+    end
+
+    validate do |r|
+      r[:suggestions].length == 8
+    end
+  end
+
+validate only runs if there is a next_page when using next_page.
+
 == Accessing the webdriver
 
 You can access the webdriver straight from:

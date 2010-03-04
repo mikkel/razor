@@ -39,9 +39,14 @@ class Shave
     @options = options
     @options[:number_of_steps]||=10
     @options[:step_time]||=0.5
+    @options[:validation_limit]||=10
     @arrays = []
     @values = []
     self.instance_eval &block
+  end
+
+  def validate(&block)
+    @validator = block
   end
 
   def next_page(xpath)
@@ -58,21 +63,44 @@ class Shave
 
   def evaluate
     result = {}
-    while(true)
-      result = merge_values(result, evaluate_values.merge(evaluate_arrays))
-      break if @next_page_xpath == nil
+    validation_attempts = 0
+    while(true) do
+      #page scrape
+      page_results = evaluate_values.merge(evaluate_arrays)
+      new_result = merge_values(result, page_results)
 
-      begin
-        @webdriver.element_by_xpath(@next_page_xpath).click
-      rescue
-        break
+      #next page
+      unless @next_page_xpath == nil
+        begin
+          next_page = @webdriver.element_by_xpath(@next_page_xpath)
+        rescue
+          break
+        end
       end
+
+      # validation
+      if @validator != nil
+        unless @validator.call(page_results)
+          validation_attempts += 1
+          raise "Validation limit of #{@options[:validation_limit]} reached for url #{@webdriver.url}" if(validation_attempts >= @options[:validation_limit])
+          sleep @options[:step_time]
+          next
+        end
+      end
+      validation_attempts = 0
+
+      result = new_result
+
+      # goto next page
+      break if @next_page_xpath == nil
+      next_page.click
     end
     result
   end
 
 
 private
+
 
   # Two hashs of {:test => [1]} {:test => [2,3]}
   # become: {:test => [1,2,3]}
