@@ -3,7 +3,7 @@ require 'watir-webdriver'
 class Razor
   attr_reader :webdriver
   def initialize(options={})
-    @webdriver = Watir::Browser.new(options[:blade] || :firefox)
+    @webdriver = Watir::Browser.new(options.delete(:blade) || :firefox, options)
     ObjectSpace.define_finalizer( self, self.class.finalize(@webdriver) )
   end
   def goto(url)
@@ -80,7 +80,10 @@ class Shave
       unless @next_page_xpath == nil
         next_page = @webdriver.element_by_xpath(@next_page_xpath)
 
-        break unless next_page.exists?
+        unless next_page.exists?
+          result = new_result
+          break
+        end
       end
 
       # validation
