@@ -1,3 +1,4 @@
+$: << File.dirname(__FILE__)+'/../../watir-webdriver/lib/'
 require 'watir-webdriver'
 
 class Razor
@@ -46,6 +47,7 @@ class Shave
     @options[:number_of_steps]||=10
     @options[:step_time]||=0.5
     @options[:validation_limit]||=10
+    @options[:flush_results_between_pages] ||= false
     @arrays = []
     @values = []
     self.instance_eval &block
@@ -66,6 +68,10 @@ class Shave
   def array(name, xpath, &block)
     @arrays << [name,xpath,block]
   end
+  
+  def with_results(&block)
+    @with_results = block
+  end
 
   def evaluate
     result = {}
@@ -73,8 +79,12 @@ class Shave
     while(true) do
       #page scrape
       page_results = evaluate_values.merge(evaluate_arrays)
-      new_result = merge_values(result, page_results)
-
+      if @options[:flush_results_between_pages]
+        new_result = page_results
+      else
+        new_result = merge_values(result, page_results)
+      end
+      
       #next page
       next_page = nil
       unless @next_page_xpath == nil
@@ -82,6 +92,7 @@ class Shave
 
         unless next_page.exists?
           result = new_result
+          @with_results.call(result) unless @with_results == nil
           break
         end
       end
@@ -96,9 +107,10 @@ class Shave
         end
       end
       validation_attempts = 0
-
+      
       result = new_result
-
+      @with_results.call(result) unless @with_results == nil
+      
       # goto next page
       break if @next_page_xpath == nil
       next_page.click
@@ -108,7 +120,6 @@ class Shave
 
 
 private
-
 
   # Two hashs of {:test => [1]} {:test => [2,3]}
   # become: {:test => [1,2,3]}

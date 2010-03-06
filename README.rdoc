@@ -72,6 +72,22 @@ To debug your xpath, add:
 
 Which will throw an error if the xpath cannot be found.
 
+== with_results
+
+If you have several hundred pages to traverse you may want to consume this information instead of accumulating it.  In that situation you may look at with_results.
+
+  razor.shave(:flush_results_between_pages => true) do
+    #...
+    next_page "a[text()='Next']"
+
+    with_results do |results|
+      puts results.inspect
+    end
+  end
+
+Note: with_results is often useful with flush_results_between_pages.  This
+flag will empty results between pages instead of accumulating them.
+
 == Closing webdriver
 
 There is a finalizer that closes the browser window.  However, Ruby finalizers aren't

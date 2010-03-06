@@ -30,6 +30,16 @@ class TestWebshaver < Test::Unit::TestCase
       assert_equal r[:stats],"1,790,000,000"
       assert r[:suggestions].length > 0
     end
+    should "Be able to post-process results" do
+      razor.goto "http://www.google.com"
+      processed = false
+      r = razor.shave do
+        with_results do |r|
+          processed = true
+        end
+      end
+      assert processed == true
+    end
   end
 end
 
