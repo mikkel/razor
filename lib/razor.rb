@@ -1,14 +1,45 @@
 $: << File.dirname(__FILE__)+'/../../watir-webdriver/lib/'
 require 'watir-webdriver'
+require 'thread'
 
 class Razor
   attr_reader :webdriver
   def initialize(options={})
-    @webdriver = Watir::Browser.new(options.delete(:blade) || :firefox, options)
+    @options = options
+    @options[:timeout_before_refresh] ||= 60*5 #5 minutes in seconds
+    @options[:blade] ||= :firefox
+    
+    # pass any extra options to watir, removing razor options
+    
+    @webdriver = Watir::Browser.new(@options[:blade], watir_options)
+    
     ObjectSpace.define_finalizer( self, self.class.finalize(@webdriver) )
   end
+  def watir_options
+    watir = @options.dup
+    watir.delete(:timeout_before_refresh)
+    watir.delete(:blade)
+    watir
+  end
   def goto(url)
-    @webdriver.goto(url)
+    begin
+      Timeout::timeout(@options[:timeout_before_refresh]) do
+        puts "going to #{url.inspect}"
+        @webdriver.goto(url)
+      end
+    rescue Timeout::Error => e
+      puts "It took longer than #{@options[:timeout_before_refresh]} to load #{url}.  Refreshing browser"
+      @webdriver.refresh
+      retry
+    end
+  end
+  # Restarts the browser.  Useful in a variety of circumstances,
+  # such as internet loss, a user closing razor's browser, etc
+  def reset!
+    temp_url = url
+    @webdriver.close
+    @webdriver = Watir::Browser.new(@options[:blade], watir_options)
+    goto(temp_url)
   end
   def url
     @webdriver.url
@@ -79,7 +110,7 @@ class Shave
     while(true) do
       #page scrape
       page_results = evaluate_values.merge(evaluate_arrays)
-      if @options[:flush_results_between_pages]
+      if @options[:flush_results_between_pages] && validation_attempts == 0
         new_result = page_results
       else
         new_result = merge_values(result, page_results)
@@ -116,8 +147,7 @@ class Shave
       next_page.click
     end
     result
-  end
-
+  end  
 
 private
 
@@ -153,17 +183,25 @@ private
 
   def try_and_sleep_on_fail
     success = false
-    @options[:number_of_steps].times do
+    (0...@options[:number_of_steps]).each do |step|
       begin
         x = yield
         if(x.is_a?(Array) && x.length==0)
+          puts "Sleeping on step #{step}"
           sleep @options[:step_time]
+          if step % 2 == 1
+            puts "Attempting refresh"
+            @webdriver.refresh
+          end
           next
         end
         success=true
         break
       rescue Exception
+        puts "exception sleeping on step #{step}"
+        @webdriver.refresh
         sleep @options[:step_time]
+        retry
       end
     end
     yield unless success
