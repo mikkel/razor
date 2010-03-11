@@ -36,7 +36,9 @@ class Razor
   # Restarts the browser.  Useful in a variety of circumstances,
   # such as internet loss, a user closing razor's browser, etc
   def reset!
+    puts "Error was significant.  creating a new browser"
     temp_url = url
+    puts "Found url = #{url.inspect}"
     @webdriver.close
     @webdriver = Watir::Browser.new(@options[:blade], watir_options)
     goto(temp_url)
