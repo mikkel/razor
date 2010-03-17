@@ -72,6 +72,12 @@ To debug your xpath, add:
 
 Which will throw an error if the xpath cannot be found.
 
+Next page will also call a block if one is specified.  This block will be called right before clicking next_page.
+
+  next_page "//a[text()='Next']" do
+    @@next_page_count += 1
+  end
+
 == with_results
 
 If you have several hundred pages to traverse you may want to consume this information instead of accumulating it.  In that situation you may look at with_results.

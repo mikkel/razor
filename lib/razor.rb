@@ -90,8 +90,9 @@ class Shave
     @validator = block
   end
 
-  def next_page(xpath)
+  def next_page(xpath, &block)
     @next_page_xpath = xpath
+    @next_page_block = block
   end
 
   def value(name, xpath, &block)
@@ -146,6 +147,7 @@ class Shave
       
       # goto next page
       break if @next_page_xpath == nil
+      @next_page_block.call(next_page) unless @next_page_block.nil?
       next_page.click
     end
     result
@@ -191,10 +193,10 @@ private
         if(x.is_a?(Array) && x.length==0)
           puts "Sleeping on step #{step}"
           sleep @options[:step_time]
-          if step % 2 == 1
-            puts "Attempting refresh"
-            @webdriver.refresh
-          end
+          #if step % 2 == 1
+            #puts "Attempting refresh"
+            #@webdriver.refresh
+          #end
           next
         end
         success=true
