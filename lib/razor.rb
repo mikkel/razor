@@ -81,6 +81,7 @@ class Shave
     @options[:step_time]||=0.5
     @options[:validation_limit]||=10
     @options[:flush_results_between_pages] ||= false
+    @options[:retry_limit] ||= 10
     @arrays = []
     @values = []
     self.instance_eval &block
@@ -187,6 +188,7 @@ private
 
   def try_and_sleep_on_fail
     success = false
+    retry_amount = 0 
     (0...@options[:number_of_steps]).each do |step|
       begin
         x = yield
@@ -201,11 +203,14 @@ private
         end
         success=true
         break
-      rescue Exception
-        puts "exception sleeping on step #{step}"
+      rescue Exception => e
+        retry_amount+=1
+        puts "exception sleeping on step #{step} (#{retry_amount}/#{@options[:retry_limit]})"
         @webdriver.refresh
         sleep @options[:step_time]
-        retry
+        retry if retry_amount < @options[:retry_limit] #only retry x times, then give up
+        puts "failed to read #{@webdriver.url} #{@options[:retry_limit]}"
+        raise e
       end
     end
     yield unless success

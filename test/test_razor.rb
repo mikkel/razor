@@ -19,15 +19,15 @@ class TestWebshaver < Test::Unit::TestCase
     should "Be able to shave" do
       razor.goto "http://www.google.com/search?q=Buy"
       r = razor.shave do
-        value(:stats, "//p[@id='resultStats']") do |x|
-          x.text.scan(/of about (.+) for/)[0][0]
+        value(:stats, "//div[@id='resultStats']") do |x|
+          x.text.scan(/About (.+) results/)[0][0]
         end
-        array :suggestions, "//table[@id='brs']/tbody/tr/td" do |x|
+        array :suggestions, "//div" do |x|
           x.text
         end
       end
 
-      assert_equal r[:stats],"1,790,000,000"
+      assert r[:stats].length > 0
       assert r[:suggestions].length > 0
     end
     should "Be able to post-process results" do
