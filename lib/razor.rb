@@ -8,6 +8,11 @@ class Razor
     @options = options
     @options[:timeout_before_refresh] ||= 60*5 #5 minutes in seconds
     @options[:blade] ||= :firefox
+
+    #accept profiles in the form of :profile => name
+    if @options[:profile].class == String && @options[:blade] == :firefox
+      @options[:profile] = Selenium::WebDriver::Firefox::Profile.from_name(@options[:profile])
+    end
     
     # pass any extra options to watir, removing razor options
     
