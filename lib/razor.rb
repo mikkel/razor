@@ -10,14 +10,24 @@ class Razor
     @options[:blade] ||= :firefox
     @options[:load_images] ||= false
 
-    puts "Loading with profile #{@options[:profile]}"
     #accept profiles in the form of :profile => name
-    if @options[:profile].class == String && @options[:blade] == :firefox
-      puts "Loading firefox webdriver"
-      profile = Selenium::WebDriver::Firefox::Profile.from_name(@options[:profile])
-      # control codes defined by mozilla.  2 blocks all images, 1 accepts all.  3 is no third party
-      profile["permissions.default.image"] = (@options[:load_images] ? 1 : 2) 
-      @options[:profile] = profile
+    if @options[:blade] == :firefox
+
+      # we accept :profile in the form of
+      # 1.  A string - looks up profile based on string
+      # 2.  A Profile object - sets profile object blindly
+      # 3.  nil - Creates a new profile
+      if @options[:profile].class == String
+        puts "Razor:  Loading firefox profile '#{@options[:profile]}'"
+        profile = Selenium::WebDriver::Firefox::Profile.from_name(@options[:profile])
+        @options[:profile] = profile
+      elsif @options[:profile] == nil
+        puts "Razor:  Creating firefox profile, setting image download to #{@options[:load_images]}"
+        profile = Selenium::WebDriver::Firefox::Profile.new
+        # control codes defined by mozilla.  2 blocks all images, 1 accepts all.  3 is no third party
+        profile["permissions.default.image"] = (@options[:load_images] ? 1 : 2) 
+        @options[:profile] = profile
+      end
 
     end
     
@@ -200,33 +210,7 @@ private
   end
 
   def try_and_sleep_on_fail
-    success = false
-    retry_amount = 0 
-    (0...@options[:number_of_steps]).each do |step|
-      begin
-        x = yield
-        if(x.is_a?(Array) && x.length==0)
-          puts "Sleeping on step #{step}"
-          sleep @options[:step_time]
-          #if step % 2 == 1
-            #puts "Attempting refresh"
-            #@webdriver.refresh
-          #end
-          next
-        end
-        success=true
-        break
-      rescue Exception => e
-        retry_amount+=1
-        puts "exception sleeping on step #{step} (#{retry_amount}/#{@options[:retry_limit]})"
-        @webdriver.refresh
-        sleep @options[:step_time]
-        retry if retry_amount < @options[:retry_limit] #only retry x times, then give up
-        puts "failed to read #{@webdriver.url} #{@options[:retry_limit]}"
-        raise e
-      end
-    end
-    yield unless success
+    yield
   end
 
   def evaluate_arrays
