@@ -197,9 +197,7 @@ private
   def evaluate_values
     result = {}
     @values.each do |name, xpath, block|
-      try_and_sleep_on_fail do
-        result[name] = process_value(xpath,block)
-      end
+      result[name] = process_value(xpath,block)
     end
     result
   end
@@ -209,16 +207,10 @@ private
     block == nil ? element : block.call(element)
   end
 
-  def try_and_sleep_on_fail
-    yield
-  end
-
   def evaluate_arrays
     result={}
     @arrays.each do |name, xpath, block|
-      try_and_sleep_on_fail do
-        result[name] = process_array(xpath, block)
-      end
+      result[name] = process_array(xpath, block)
     end
     result
   end
