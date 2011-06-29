@@ -8,10 +8,17 @@ class Razor
     @options = options
     @options[:timeout_before_refresh] ||= 60*5 #5 minutes in seconds
     @options[:blade] ||= :firefox
+    @options[:load_images] ||= false
 
+    puts "Loading with profile #{@options[:profile]}"
     #accept profiles in the form of :profile => name
     if @options[:profile].class == String && @options[:blade] == :firefox
-      @options[:profile] = Selenium::WebDriver::Firefox::Profile.from_name(@options[:profile])
+      puts "Loading firefox webdriver"
+      profile = Selenium::WebDriver::Firefox::Profile.from_name(@options[:profile])
+      # control codes defined by mozilla.  2 blocks all images, 1 accepts all.  3 is no third party
+      profile["permissions.default.image"] = (@options[:load_images] ? 1 : 2) 
+      @options[:profile] = profile
+
     end
     
     # pass any extra options to watir, removing razor options
@@ -24,6 +31,7 @@ class Razor
     watir = @options.dup
     watir.delete(:timeout_before_refresh)
     watir.delete(:blade)
+    watir.delete(:load_images)
     watir
   end
   def goto(url)
