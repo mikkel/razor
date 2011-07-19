@@ -9,6 +9,7 @@ class Razor
     @options[:timeout_before_refresh] ||= 60*5 #5 minutes in seconds
     @options[:blade] ||= :firefox
     @options[:load_images] ||= false
+    @options[:speed_limit] ||= 10 # sleep between request default
 
     #accept profiles in the form of :profile => name
     if @options[:blade] == :firefox
@@ -42,9 +43,21 @@ class Razor
     watir.delete(:timeout_before_refresh)
     watir.delete(:blade)
     watir.delete(:load_images)
+    watir.delete(:speed_limit)
     watir
   end
   def goto(url)
+    # don't break the speed limit
+    if defined? @last_request_time
+      time_passed = Time.now - @last_request_time
+      if time_passed < @options[:speed_limit]
+        sleep_timer = (@options[:speed_limit] - time_passed).to_f
+        puts "sleeping for #{sleep_timer}"
+        sleep(sleep_timer)
+      end
+    end
+
+    @last_request_time = Time.now
     begin
       Timeout::timeout(@options[:timeout_before_refresh]) do
         puts "going to #{url.inspect}"
