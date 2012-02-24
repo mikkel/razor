@@ -4,17 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{razor}
-  s.version = "0.4.1"
+  s.name = "razor"
+  s.version = "0.4.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mikkel Garcia"]
-  s.date = %q{2011-07-19}
-  s.description = %q{
-    Razor is a simplistic web scraper built on watir-webdriver.
-    Razor is not magic it is a tool that straight-up uses the web browser to access web pages and xpath (only xpath) to parse the DOM of a web page.
-}
-  s.email = %q{lekkim.garcia@gmail.com}
+  s.date = "2012-02-24"
+  s.description = "\n    Razor is a simplistic web scraper built on watir-webdriver.\n    Razor is not magic it is a tool that straight-up uses the web browser to access web pages and xpath (only xpath) to parse the DOM of a web page.\n"
+  s.email = "lekkim.garcia@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE",
     "README.rdoc"
@@ -32,10 +29,10 @@ Gem::Specification.new do |s|
     "test/helper.rb",
     "test/test_razor.rb"
   ]
-  s.homepage = %q{http://github.com/mikkel/razor}
+  s.homepage = "http://github.com/mikkel/razor"
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.2}
-  s.summary = %q{A simplistic web scraper built on watir-webdriver}
+  s.rubygems_version = "1.8.17"
+  s.summary = "A simplistic web scraper built on watir-webdriver"
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
