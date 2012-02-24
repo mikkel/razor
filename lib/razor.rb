@@ -89,13 +89,13 @@ class Razor
     @webdriver.form(:xpath, "//form").submit
   end
   def element(xpath)
-    @webdriver.element_by_xpath(xpath)
+    @webdriver.element(:xpath, xpath)
   end
   def input(xpath)
     @webdriver.input(:xpath, xpath)
   end
   def click(xpath)
-    @webdriver.element_by_xpath(xpath).click
+    @webdriver.element(:xpath, xpath).click
   end
   def shave(options={}, &block)
     Shave.new(@webdriver, options, &block).evaluate
@@ -159,7 +159,7 @@ class Shave
       #next page
       next_page = nil
       unless @next_page_xpath == nil
-        next_page = @webdriver.element_by_xpath(@next_page_xpath)
+        next_page = @webdriver.element(:xpath, @next_page_xpath)
 
         unless next_page.exists?
           result = new_result
@@ -216,7 +216,7 @@ private
   end
 
   def process_value(xpath, block)
-    element = @webdriver.element_by_xpath(xpath)
+    element = @webdriver.element(:xpath, xpath)
     block == nil ? element : block.call(element)
   end
 
@@ -229,7 +229,7 @@ private
   end
 
   def process_array(xpath, block)
-    @webdriver.elements_by_xpath(xpath).map do |element|
+    @webdriver.elements(:xpath, xpath).map do |element|
       block == nil || element == nil ? element : block.call(element)
     end
   end
