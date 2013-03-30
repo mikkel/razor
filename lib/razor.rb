@@ -21,14 +21,14 @@ class Razor
       if @options[:profile].class == String
         puts "Razor:  Loading firefox profile '#{@options[:profile]}'"
         profile = Selenium::WebDriver::Firefox::Profile.from_name(@options[:profile])
-        @options[:profile] = profile
       elsif @options[:profile] == nil
         puts "Razor:  Creating firefox profile, setting image download to #{@options[:load_images]}"
         profile = Selenium::WebDriver::Firefox::Profile.new
         # control codes defined by mozilla.  2 blocks all images, 1 accepts all.  3 is no third party
         profile["permissions.default.image"] = (@options[:load_images] ? 1 : 2) 
-        @options[:profile] = profile
       end
+      profile["general.useragent.override"]=@options[:useragent] if @options[:useragent]
+      @options[:profile] = profile
 
     end
     
