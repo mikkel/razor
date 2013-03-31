@@ -26,8 +26,8 @@ class Razor
         profile = Selenium::WebDriver::Firefox::Profile.new
         # control codes defined by mozilla.  2 blocks all images, 1 accepts all.  3 is no third party
         profile["permissions.default.image"] = (@options[:load_images] ? 1 : 2) 
+        profile["general.useragent.override"]=@options[:useragent] if @options[:useragent]
       end
-      profile["general.useragent.override"]=@options[:useragent] if @options[:useragent]
       @options[:profile] = profile
 
     end
@@ -43,6 +43,7 @@ class Razor
     watir.delete(:timeout_before_refresh)
     watir.delete(:blade)
     watir.delete(:load_images)
+    watir.delete :useragent
     watir.delete(:speed_limit)
     watir
   end
